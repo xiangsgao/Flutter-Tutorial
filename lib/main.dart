@@ -1,4 +1,4 @@
 import 'package:flutter/material.dart';
-import 'QuizApp/QuizApp.dart';
+import 'ExpensePlannerApp/ExpensePlannerApp.dart';
 
-void main() => runApp(const QuizApp());
+void main() => runApp(const ExpensePlannerApp());

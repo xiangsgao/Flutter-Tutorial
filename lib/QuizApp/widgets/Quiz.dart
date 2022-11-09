@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_app/QuizApp//AnswerButton.dart';
-import 'package:flutter_app/QuizApp//Question.dart';
+import 'package:flutter_app/QuizApp/widgets/AnswerButton.dart';
+import 'package:flutter_app/QuizApp/widgets/Question.dart';
 
 class Quiz extends StatelessWidget{
   final List<Map<String, Object>> questions;
