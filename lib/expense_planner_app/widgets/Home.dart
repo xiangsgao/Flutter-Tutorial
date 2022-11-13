@@ -18,14 +18,20 @@ class _HomeState extends State<Home> {
 
   final List<Transaction> transactions = [];
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount, DateTime dateTime) {
     final transaction = Transaction(
         id: transactions.length.toString(),
         amount: amount,
-        date: DateTime.now(),
+        date: dateTime,
         title: title);
     setState(() {
       transactions.add(transaction);
+    });
+  }
+
+  void _deleteTransaction(String id){
+    setState(() {
+      transactions.removeWhere((element) => element.id == id);
     });
   }
 
@@ -42,47 +48,44 @@ class _HomeState extends State<Home> {
         });
   }
 
-  List<Transaction> get _recentTransactions{
+  List<Transaction> get _recentTransactions {
     final earliest = DateTime.now().subtract(const Duration(days: 7));
     return transactions.where((element) {
-        return element.date.isAfter(earliest);
+      return element.date.isAfter(earliest);
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-          onPressed: () => _startAddNewTransaction(context),
-          child: IconButton(
-              onPressed: () => _startAddNewTransaction(context),
-              icon: Icon(Icons.add))),
-      appBar: AppBar(
-        title: Container(
-            width: double.infinity,
-            child: Text(
-              "Expense Planner App",
-              style: Theme.of(context).appBarTheme.titleTextStyle,
-            )),
-        actions: [
-          IconButton(
-              onPressed: () => _startAddNewTransaction(context),
-              icon: Icon(Icons.add))
-        ],
-      ),
-      body: SingleChildScrollView(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-            Container(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FloatingActionButton(
+            onPressed: () => _startAddNewTransaction(context),
+            child: IconButton(
+                onPressed: () => _startAddNewTransaction(context),
+                icon: Icon(Icons.add))),
+        appBar: AppBar(
+          title: Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(top: 10),
-              child: Chart(_recentTransactions)
-            ),
-            TransactionList(transactions)
-          ])),
-    );
+              child: Text(
+                "Expense Planner App",
+                style: Theme.of(context).appBarTheme.titleTextStyle,
+              )),
+          actions: [
+            IconButton(
+                onPressed: () => _startAddNewTransaction(context),
+                icon: Icon(Icons.add))
+          ],
+        ),
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(top: 10),
+                  child: Chart(_recentTransactions)),
+              TransactionList(transactions, _deleteTransaction)
+            ]));
   }
 }
