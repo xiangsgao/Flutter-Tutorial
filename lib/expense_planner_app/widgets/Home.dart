@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/expense_planner_app/widgets/Chart/Chart.dart';
 import 'package:flutter_app/expense_planner_app/widgets/user_transaction/new_transaction/NewTranaction.dart';
@@ -15,7 +17,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final titleInputController = TextEditingController();
   final amountInputController = TextEditingController();
-  bool _showChart = false;
+  bool _showChart = true;
 
   final List<Transaction> transactions = [];
 
@@ -76,11 +78,13 @@ class _HomeState extends State<Home> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton(
-            onPressed: () => _startAddNewTransaction(context),
-            child: IconButton(
+        floatingActionButton: Platform.isIOS // if on ios then hide
+            ? Container()
+            : FloatingActionButton(
                 onPressed: () => _startAddNewTransaction(context),
-                icon: Icon(Icons.add))),
+                child: IconButton(
+                    onPressed: () => _startAddNewTransaction(context),
+                    icon: Icon(Icons.add))),
         appBar: appBar,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -91,7 +95,8 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Show chart"),
-                    Switch(
+                    Switch.adaptive(
+                        // make it ios friendly
                         value: _showChart,
                         onChanged: (val) {
                           setState(() {
