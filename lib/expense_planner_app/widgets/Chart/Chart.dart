@@ -5,8 +5,9 @@ import 'ChartBar/ChartBar.dart';
 
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
+  final double appBarHeight;
 
-  const Chart(this.recentTransactions, {Key? key}) : super(key: key);
+  const Chart(this.recentTransactions, this.appBarHeight, {Key? key}) : super(key: key);
 
   List<Map<String, Object>> get groupTransactionValues {
     return List.generate(7, (index) {
@@ -30,20 +31,25 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      margin: EdgeInsets.all(20),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            ...groupTransactionValues.map((e) {
-              return Flexible(
-                fit: FlexFit.loose,
-                  child: ChartBar(e["day"] as String, e["amount"] as double, maxSpending == 0 ? 0 :(e["amount"] as double) / maxSpending));
-            }).toList()
-          ],
+    return Container(
+      width: double.infinity,
+      height: (MediaQuery.of(context).size.height - appBarHeight - MediaQuery.of(context).padding.top) * 0.25,
+      // margin: const EdgeInsets.only(top: 10),
+      child: Card(
+        elevation: 5,
+        margin: EdgeInsets.all(20),
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ...groupTransactionValues.map((e) {
+                return Flexible(
+                  fit: FlexFit.loose,
+                    child: ChartBar(e["day"] as String, e["amount"] as double, maxSpending == 0 ? 0 :(e["amount"] as double) / maxSpending));
+              }).toList()
+            ],
+          ),
         ),
       ),
     );

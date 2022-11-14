@@ -15,6 +15,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final titleInputController = TextEditingController();
   final amountInputController = TextEditingController();
+  bool _showChart = false;
 
   final List<Transaction> transactions = [];
 
@@ -29,7 +30,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _deleteTransaction(String id){
+  void _deleteTransaction(String id) {
     setState(() {
       transactions.removeWhere((element) => element.id == id);
     });
@@ -57,6 +58,22 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Container(
+          width: double.infinity,
+          child: Text(
+            "Expense Planner App",
+            style: Theme.of(context).appBarTheme.titleTextStyle,
+          )),
+      actions: [
+        IconButton(
+            onPressed: () => _startAddNewTransaction(context),
+            icon: Icon(Icons.add))
+      ],
+    );
+
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton(
@@ -64,28 +81,28 @@ class _HomeState extends State<Home> {
             child: IconButton(
                 onPressed: () => _startAddNewTransaction(context),
                 icon: Icon(Icons.add))),
-        appBar: AppBar(
-          title: Container(
-              width: double.infinity,
-              child: Text(
-                "Expense Planner App",
-                style: Theme.of(context).appBarTheme.titleTextStyle,
-              )),
-          actions: [
-            IconButton(
-                onPressed: () => _startAddNewTransaction(context),
-                icon: Icon(Icons.add))
-          ],
-        ),
+        appBar: appBar,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(top: 10),
-                  child: Chart(_recentTransactions)),
-              TransactionList(transactions, _deleteTransaction)
+              if (isLandscape)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Show chart"),
+                    Switch(
+                        value: _showChart,
+                        onChanged: (val) {
+                          setState(() {
+                            _showChart = val;
+                          });
+                        }),
+                  ],
+                ),
+              Chart(_recentTransactions, appBar.preferredSize.height),
+              TransactionList(
+                  transactions, _deleteTransaction, appBar.preferredSize.height)
             ]));
   }
 }
