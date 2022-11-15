@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/Home.dart';
+import 'widgets/home.dart';
 
 class ExpensePlannerApp extends StatelessWidget {
   const ExpensePlannerApp({super.key});

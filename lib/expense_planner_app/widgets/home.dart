@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/expense_planner_app/widgets/Chart/Chart.dart';
-import 'package:flutter_app/expense_planner_app/widgets/user_transaction/new_transaction/NewTranaction.dart';
-import 'package:flutter_app/expense_planner_app/widgets/user_transaction/transaction_list/TransactionList.dart';
+import 'package:flutter_app/expense_planner_app/widgets/chart/chart.dart';
+import 'package:flutter_app/expense_planner_app/widgets/user_transaction/new_transaction/new_tranaction.dart';
+import 'package:flutter_app/expense_planner_app/widgets/user_transaction/transaction_list/transaction_list.dart';
 
-import '../models/Transaction.dart';
+import '../models/transaction.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
