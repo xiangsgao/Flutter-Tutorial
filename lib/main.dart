@@ -1,4 +1,4 @@
 import 'package:flutter/material.dart';
-import 'expense_planner_app/expense_plannerApp.dart';
+import 'package:flutter_app/meal_app/meal_app.dart';
 
-void main() => runApp(const ExpensePlannerApp());
+void main() => runApp(const MealApp());
