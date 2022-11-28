@@ -3,13 +3,36 @@ import 'package:flutter_app/meal_app/models/meal.dart';
 
 import '../../meal_detail_screen/meal_detail_screen.dart';
 
-class MealItem extends StatelessWidget {
+class MealItem extends StatefulWidget {
   final Meal meal;
 
   const MealItem({Key? key, required this.meal}) : super(key: key);
 
+  @override
+  State<MealItem> createState() => _MealItemState();
+}
+
+class _MealItemState extends State<MealItem> {
+
+  bool deleted = false;
+
+  void _removeMeal(Meal meal){
+    setState(() {
+      deleted = true;
+    });
+  }
+
+  // if we want access context in init state, that is impossible since widget has not be init
+  // use didChangeDependencies instead, this is run after each set state
+  @override
+  void didChangeDependencies(){
+    final args = ModalRoute.of(context)?.settings.arguments;
+    super.didChangeDependencies();
+  }
+
+
   String get complexityText {
-    switch (meal.complexity) {
+    switch (widget.meal.complexity) {
       case Complexity.Simple:
         return "Simple";
       case Complexity.Challenging:
@@ -22,7 +45,7 @@ class MealItem extends StatelessWidget {
   }
 
   String get affordabilityText {
-    switch (meal.affordability) {
+    switch (widget.meal.affordability) {
       case Affordability.Affordable:
         return "Affordable";
       case Affordability.Luxurious:
@@ -35,12 +58,20 @@ class MealItem extends StatelessWidget {
   }
 
   void selectMeal(BuildContext context) {
-    Navigator.of(context)
-        .pushNamed(MealDetailScreen.ROUTE_NAME, arguments: meal);
+    final future = Navigator.of(context)
+        .pushNamed(MealDetailScreen.ROUTE_NAME, arguments: widget.meal);
+    future.then((deletedMeal){
+      if(deletedMeal != null) {
+        _removeMeal(deletedMeal as Meal);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if(deleted) {
+      return const SizedBox.shrink();
+    }
     return InkWell(
       onTap: () => selectMeal(context),
       child: Card(
@@ -56,7 +87,7 @@ class MealItem extends StatelessWidget {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15)),
                   child: Image.network(
-                    meal.imageUrl,
+                    widget.meal.imageUrl,
                     height: 250,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -70,7 +101,7 @@ class MealItem extends StatelessWidget {
                         const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                     color: Colors.black54,
                     child: Text(
-                      meal.title,
+                      widget.meal.title,
                       style: const TextStyle(
                         fontSize: 26,
                         color: Colors.white,
@@ -93,7 +124,7 @@ class MealItem extends StatelessWidget {
                       const SizedBox(
                         width: 6,
                       ),
-                      Text('${meal.duration}'),
+                      Text('${widget.meal.duration}'),
                     ],
                   ),
                   Row(

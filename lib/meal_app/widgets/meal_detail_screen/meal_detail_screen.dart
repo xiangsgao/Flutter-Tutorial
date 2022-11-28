@@ -31,56 +31,63 @@ class MealDetailScreen extends StatelessWidget {
     final meal = ModalRoute.of(context)?.settings.arguments as Meal;
     final titleStyle = Theme.of(context).textTheme.titleLarge;
     return Scaffold(
-        appBar: AppBar(
-          title: Text(meal.title),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 300,
-                width: double.infinity,
-                child: Image.network(
-                  meal.imageUrl,
-                  fit: BoxFit.cover,
-                ),
+      appBar: AppBar(
+        title: Text(meal.title),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 300,
+              width: double.infinity,
+              child: Image.network(
+                meal.imageUrl,
+                fit: BoxFit.cover,
               ),
-              buildSectionTitle(context, "Ingredients"),
-              buildContainer(
-                  context,
-                  ListView.builder(
-                    itemBuilder: (ctx, index) {
-                      return Card(
-                        color: Theme.of(context).accentColor,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 10),
-                          child: Text(meal.ingredient[index]),
+            ),
+            buildSectionTitle(context, "Ingredients"),
+            buildContainer(
+                context,
+                ListView.builder(
+                  itemBuilder: (ctx, index) {
+                    return Card(
+                      color: Theme.of(context).accentColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        child: Text(meal.ingredient[index]),
+                      ),
+                    );
+                  },
+                  itemCount: meal.ingredient.length,
+                )),
+            buildSectionTitle(context, "Steps"),
+            buildContainer(
+                context,
+                ListView.builder(
+                  itemBuilder: (e, index) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(meal.steps[index]),
+                          leading:
+                              CircleAvatar(child: Text("# ${(index + 1)}")),
                         ),
-                      );
-                    },
-                    itemCount: meal.ingredient.length,
-                  )),
-              buildSectionTitle(context, "Steps"),
-              buildContainer(
-                  context,
-                  ListView.builder(
-                    itemBuilder: (e, index) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            title: Text(meal.steps[index]),
-                            leading:
-                                CircleAvatar(child: Text("# ${(index + 1)}")),
-                          ),
-                          const Divider()
-                        ],
-                      );
-                    },
-                    itemCount: meal.steps.length,
-                  )),
-            ],
-          ),
-        ));
+                        const Divider()
+                      ],
+                    );
+                  },
+                  itemCount: meal.steps.length,
+                )),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pop(meal);
+        },
+        child: const Icon(Icons.delete),
+      ),
+    );
   }
 }
