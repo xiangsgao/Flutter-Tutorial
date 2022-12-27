@@ -1,40 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/shop_app/model/product.dart';
-import 'package:flutter_app/shop_app/widgets/product_item.dart';
+import 'package:flutter_app/shop_app/providers/cart.dart';
+import 'package:flutter_app/shop_app/providers/products.dart';
+import 'package:flutter_app/shop_app/screens/cart_screen.dart';
+import 'package:flutter_app/shop_app/widgets/badge.dart';
+import 'package:provider/provider.dart';
+import '../widgets/products_grid.dart';
 
-class ProductOverviewScreen extends StatelessWidget {
-  final List<Product> loadedProducts = [
-    Product(
-        id: "test",
-        title: "product1",
-        description: "super test",
-        price: 2.23,
-        imageUrl:
-            "https://www.mountaingoatsoftware.com/uploads/blog/2016-09-06-what-is-a-product-quote.png",
-        isFavorite: false)
-  ];
+enum FilterOptions { favorites, all }
 
-  ProductOverviewScreen({Key? key}) : super(key: key);
+class ProductOverviewScreen extends StatefulWidget {
+  const ProductOverviewScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProductOverviewScreen> createState() => _ProductOverviewScreenState();
+}
+
+class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
+  bool _showOnlyFavorites = false;
 
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          PopupMenuButton(
+            onSelected: (FilterOptions selection) {
+              setState(() {
+                if (selection == FilterOptions.all) {
+                  _showOnlyFavorites = false;
+                } else {
+                  _showOnlyFavorites = true;
+                }
+              });
+            },
+            icon: const Icon(Icons.more_vert),
+            itemBuilder: (_) {
+              return [
+                const PopupMenuItem(
+                  value: FilterOptions.favorites,
+                  child: Text("Only Favorites"),
+                ),
+                const PopupMenuItem(
+                  value: FilterOptions.all,
+                  child: Text("Show All"),
+                )
+              ];
+            },
+          ),
+          Consumer<Cart>(
+              builder: (_, cart, badge) {
+                return Badge(
+                    value: cart.itemCount.toString(),
+                    color: Colors.red,
+                    child: badge!);
+              },
+              child: IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                   Navigator.of(context).pushNamed(CartScreen.route);
+                },
+              ))
+        ],
         title: const Text("My shop"),
       ),
-      body: GridView.builder(
-          padding: const EdgeInsets.all(10),
-          itemCount: loadedProducts.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 3 / 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10
-          ),
-          itemBuilder: (context, index) {
-            final cur = loadedProducts[index];
-            return ProductItem(imageUrl: cur.imageUrl, title: cur.title, id: cur.id);
-          }),
+      body: ProductsGrid(_showOnlyFavorites),
     );
   }
 }
