@@ -20,13 +20,13 @@ class Cart with ChangeNotifier {
     return {..._items};
   }
 
-  int get itemCount{
+  int get itemCount {
     return _items.length;
   }
-  
-  double get totalAmount{
+
+  double get totalAmount {
     double total = 0.0;
-    _items.forEach((key, cartItem) { 
+    _items.forEach((key, cartItem) {
       total += cartItem.price * cartItem.quantity;
     });
     return total;
@@ -53,8 +53,33 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeItem(String id){
+  void removeItem(String id) {
     _items.remove(id);
+    notifyListeners();
+  }
+
+  void clearCart() {
+    _items.clear();
+    notifyListeners();
+  }
+
+  void removeSingleItem(String productId) {
+    if (!_items.containsKey(productId)) {
+      throw Exception("no such product id exists");
+    }
+
+    if (_items[productId]!.quantity > 1) {
+      _items.update(
+          productId,
+          (value) => CartItem(
+              id: value.id,
+              title: value.title,
+              price: value.price,
+              quantity: value.quantity - 1));
+    } else if(_items[productId]!.quantity == 1){
+      _items.remove(productId);
+    }
+
     notifyListeners();
   }
 }

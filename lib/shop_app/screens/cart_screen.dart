@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/shop_app/providers/orders.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
 import '../widgets/cart_item.dart';
@@ -38,7 +39,14 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: theme.primaryColor,
                   ),
-                  TextButton(onPressed: () {}, child: const Text("ORDER NOW!"))
+                  TextButton(
+                      onPressed: () {
+                        final orders = Provider.of<Orders>(context, listen: false);
+                        orders.addOrder(
+                            cart.items.values.toList(), cart.totalAmount);
+                        cart.clearCart();
+                      },
+                      child: const Text("ORDER NOW!"))
                 ],
               ),
             ),
@@ -46,17 +54,20 @@ class CartScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Expanded(child: ListView.builder(itemBuilder: (context, index){
-            final cartItems = cart.items.values.toList();
-            final cartItemsKeys = cart.items.keys.toList();
-            return CartIem(
-              id: cartItems[index].id,
-              price: cartItems[index].price,
-              quantity: cartItems[index].quantity,
-              title: cartItems[index].title,
-              productMapKey: cartItemsKeys[index]
-            );
-          }, itemCount: cart.itemCount,))
+          Expanded(
+              child: ListView.builder(
+            itemBuilder: (context, index) {
+              final cartItems = cart.items.values.toList();
+              final cartItemsKeys = cart.items.keys.toList();
+              return CartIem(
+                  id: cartItems[index].id,
+                  price: cartItems[index].price,
+                  quantity: cartItems[index].quantity,
+                  title: cartItems[index].title,
+                  productMapKey: cartItemsKeys[index]);
+            },
+            itemCount: cart.itemCount,
+          ))
         ],
       ),
     );

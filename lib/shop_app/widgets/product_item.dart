@@ -5,10 +5,7 @@ import 'package:flutter_app/shop_app/screens/product_details_screen.dart';
 import 'package:provider/provider.dart';
 
 class ProductItem extends StatelessWidget {
-
-  const ProductItem(
-      {Key? key})
-      : super(key: key);
+  const ProductItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +21,19 @@ class ProductItem extends StatelessWidget {
             color: Theme.of(context).accentColor,
             onPressed: () {
               cart.addItem(product.id, product.price, product.title);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text("Added item to cart"),
+                duration: const Duration(seconds: 2),
+                action: SnackBarAction(label: "UNDO", onPressed: (){
+                  cart.removeSingleItem(product.id);
+                }),
+              ));
             },
           ),
           leading: IconButton(
-            icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(
+                product.isFavorite ? Icons.favorite : Icons.favorite_border),
             color: Theme.of(context).accentColor,
             onPressed: () {
               product.toggleFavoriteStatus();
@@ -39,8 +45,9 @@ class ProductItem extends StatelessWidget {
           ),
         ),
         child: GestureDetector(
-          onTap: (){
-            Navigator.of(context).pushNamed(ProductDetailsScreen.routeName, arguments: product.id);
+          onTap: () {
+            Navigator.of(context).pushNamed(ProductDetailsScreen.routeName,
+                arguments: product.id);
           },
           child: Image.network(
             product.imageUrl,
